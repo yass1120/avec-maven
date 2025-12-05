@@ -5,10 +5,6 @@ pipeline {
         maven "M2_HOME"
     }
 
-    environment {
-        DOCKER_CREDENTIALS= credentials('dockerhub')
-    }
-
     stages {
         stage("Code Checkout") {
             steps {
@@ -33,23 +29,6 @@ pipeline {
             steps {
                 withSonarQubeEnv('SQ1') {
                     sh "mvn sonar:sonar"
-                }
-            }
-        }
-
-        stage('Docker Build') {
-            steps {
-                script {
-                    sh "docker build -t yasmine2004/student-management:1.0 ."
-                }
-            }
-        }
-
-        stage('Docker Push') {
-            steps {
-                script {
-                    sh 'echo $DOCKER_CREDENTIALS_PSW | docker login -u $DOCKER_CREDENTIALS_USR --password-stdin'
-                    sh "docker push yasmine2004/student-management:1.0"
                 }
             }
         }
