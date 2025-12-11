@@ -5,8 +5,9 @@ pipeline {
         maven "M2_HOME"
     }
 
-        environment {
-        DOCKER_CREDENTIALS= credentials('dockerhub')
+    environment {
+        DOCKER_CREDENTIALS = credentials('dockerhub')
+        K8S_NAMESPACE = 'devopss'
     }
 
     stages {
@@ -29,14 +30,15 @@ pipeline {
             }
         }
 
-        stage('Sonar Test'){
+        stage('Sonar Test') {
             steps {
                 withSonarQubeEnv('SQ1') {
                     sh "mvn sonar:sonar"
                 }
             }
         }
-         stage('Docker Build') {
+
+        stage('Docker Build') {
             steps {
                 script {
                     sh "docker build -t yasmine2004/student-management:1.0 ."
@@ -53,22 +55,20 @@ pipeline {
             }
         }
 
- stage('Deploy to Kubernetes') {
-    steps {
-        script {
-            sh "kubectl apply -f k8s-deployment.yaml -n devopss"
-            sh "kubectl rollout status deployment/spring-app -n devopss"
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    sh "kubectl apply -f k8s-deployment.yaml -n ${K8S_NAMESPACE}"
+                    sh "kubectl rollout status deployment/spring-app -n ${K8S_NAMESPACE}"
+                }
+            }
+        }
+    } // <-- closes stages
+
+    post {
+        always {
+            sh "kubectl get pods -n ${K8S_NAMESPACE}"
         }
     }
-}
 
-post {
-    always {
-        sh "kubectl get pods -n devopss"
-    }
-}
-
-
-
-    }
-}
+} // <-- closes pipeline
