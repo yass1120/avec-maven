@@ -131,5 +131,5 @@ spec:
   ports:
     - port: 8080
       targetPort: 8089
-      nodePort: 30080
+      nodePort: 30085
   type: NodePort
