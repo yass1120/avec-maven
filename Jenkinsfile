@@ -53,5 +53,24 @@ pipeline {
             }
         }
 
+        stage('Deploy to Kubernetes') {
+    steps {
+        script {
+            // Applique le fichier multi-doc YAML
+            sh "kubectl apply -f k8s-deployment.yaml -n devopss"
+
+            sh "kubectl rollout status deployment/spring-app -n devopss"
+        }
+    }
+}
+
+post {
+    always {
+    
+        sh "kubectl get pods -n devopss"
+    }
+}
+
+
     }
 }
