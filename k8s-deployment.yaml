@@ -16,7 +16,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mysql-pvc
-  namespace: devops
+  namespace: devopss
 spec:
   accessModes:
     - ReadWriteOnce
@@ -29,7 +29,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mysql
-  namespace: devops
+  namespace: devopss
 spec:
   replicas: 1
   selector:
@@ -63,7 +63,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mysql-service
-  namespace: devops
+  namespace: devopss
 spec:
   selector:
     app: mysql
@@ -77,7 +77,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: spring-config
-  namespace: devops
+  namespace: devopss
 data:
   SPRING_DATASOURCE_URL: jdbc:mysql://mysql-service:3306/springdb
 
@@ -86,7 +86,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: spring-secret
-  namespace: devops
+  namespace: devopss
 type: Opaque
 data:
   SPRING_DATASOURCE_USERNAME: cm9vdA==    # "root" en base64
@@ -97,7 +97,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: spring-app
-  namespace: devops
+  namespace: devopss
 spec:
   replicas: 2
   selector:
@@ -110,7 +110,7 @@ spec:
     spec:
       containers:
         - name: spring-app
-          image: notsohealthy/student-management:1.0
+          image: yasmine2004/student-management:1.0
           ports:
             - containerPort: 8089
           envFrom:
@@ -124,12 +124,12 @@ apiVersion: v1
 kind: Service
 metadata:
   name: spring-service
-  namespace: devops
+  namespace: devopss
 spec:
   selector:
     app: spring-app
   ports:
     - port: 8080
       targetPort: 8089
-      nodePort: 30083
+      nodePort: 30080
   type: NodePort
